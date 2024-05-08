@@ -125,7 +125,7 @@ for (( i=0; i<$NUM_NODES; i++ )); do
     $GETH_BINARY \
       --networkid=${CHAIN_ID:-32382} \
       --http \
-      --http.api=eth,net,web3 \
+      --http.api=web3,eth,debug,personal,net \
       --http.addr=0.0.0.0 \
       --http.corsdomain="*" \
       --http.port=$((GETH_HTTP_PORT + i)) \
@@ -146,6 +146,7 @@ for (( i=0; i<$NUM_NODES; i++ )); do
       --identity=node-$i \
       --maxpendpeers=$NUM_NODES \
       --verbosity=3 \
+      --vmdebug \
       --syncmode=full > "$NODE_DIR/logs/geth.log" 2>&1 &
 
     sleep 5
