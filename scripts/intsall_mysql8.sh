@@ -10,6 +10,9 @@ backup_url="http://8.141.4.67/base/mysql/$file_name"
 # 下载超时时间（秒）
 timeout=10
 
+#过渡密码
+interim_password="Aew&de!23"
+
 echo "Attempting to download from main URL..."
 if curl --output /dev/null --silent --head --fail --max-time $timeout "$main_url"; then
     echo "Downloading from main URL..."
@@ -65,11 +68,17 @@ sleep 10
 # 输出临时密码
 temp_password=$(grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}')
 
+# 修改密码为过渡密码
+mysql -u root -p"$temp_password" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY $interim_password;"
+
 # 修改 MySQL 密码验证等级为 LOW
-mysql -u root -p"$temp_password" -e "SET GLOBAL validate_password.policy=LOW;"
+mysql -u root -p"$interim_password" -e "SET GLOBAL validate_password.policy=LOW;"
+
+#修改 MySQL 密码验证长度为6
+mysql -u root -p"$interim_password" -e "SET GLOBAL validate_password.length=6;"
 
 # 修改 MySQL 密码为 '123456'
-mysql -u root -p"$temp_password" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '123456';"
+mysql -u root -p"$interim_password" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '123456';"
 
 # 输出修改后的密码
 echo "MySQL password has been changed to '123456'."
