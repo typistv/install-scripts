@@ -30,17 +30,49 @@ if [ ! -f "$file_name" ]; then
     fi
 fi
 
-# 添加 MySQL Yum 存储库
-yum localinstall $file_name
+# 检查文件是否存在，如果不存在则退出
+if [ ! -f "$file_name" ]; then
+    echo "File not found. Exiting..."
+    exit 1
+fi
 
+# 安装 MySQL Yum 存储库
+yum localinstall -y $file_name
+
+# 安装 yum-utils
+yum install -y yum-utils
+
+# 更新存储库缓存
+yum makecache
+
+# 禁用 mysql-8.4-lts-community 和 mysql-tools-8.4-lts-community 存储库
 yum-config-manager --disable mysql-8.4-lts-community
 yum-config-manager --disable mysql-tools-8.4-lts-community
 
+# 启用 mysql80-community 和 mysql-tools-community 存储库
 yum-config-manager --enable mysql80-community
 yum-config-manager --enable mysql-tools-community
 
-yum install mysql-community-server
+# 安装 MySQL 服务器
+yum install -y mysql-community-server
 
+# 启动 MySQL 服务
 systemctl start mysqld
 
-grep 'temporary password' /var/log/mysqld.log
+# 等待一段时间，确保 MySQL 服务已启动
+sleep 10
+
+# 输出临时密码
+temp_password=$(grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}')
+
+# 修改 MySQL 密码验证等级为 LOW
+mysql -u root -p"$temp_password" -e "SET GLOBAL validate_password.policy=LOW;"
+
+# 修改 MySQL 密码为 '123456'
+mysql -u root -p"$temp_password" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '123456';"
+
+# 输出修改后的密码
+echo "MySQL password has been changed to '123456'."
+
+# 退出脚本
+exit 0
