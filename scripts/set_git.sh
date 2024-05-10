@@ -1,10 +1,19 @@
 #!/bin/bash
 
-# 检查是否已经安装了git，如果已经安装则退出脚本
-# if command -v git &>/dev/null; then
-#     echo "Git is already installed. Exiting."
-#     exit 0
-# fi
+# 检查是否已经安装了git，如果没有安装则安装
+if ! command -v git &>/dev/null; then
+    # 安装git
+    echo "Installing Git..."
+    if command -v apt-get &>/dev/null; then
+        apt-get update
+        apt-get install -y git
+    elif command -v yum &>/dev/null; then
+        yum install -y git
+    else
+        echo "Unsupported package manager. Please install git manually."
+        exit 1
+    fi
+fi
 
 # 检查是否已经安装了wget，如果未安装则安装wget
 if ! command -v wget &>/dev/null; then
@@ -21,17 +30,7 @@ if ! command -v wget &>/dev/null; then
     fi
 fi
 
-# 安装git
-echo "Installing Git..."
-if command -v apt-get &>/dev/null; then
-    apt-get update
-    apt-get install -y git
-elif command -v yum &>/dev/null; then
-    yum install -y git
-else
-    echo "Unsupported package manager. Please install git manually."
-    exit 1
-fi
+
 
 # 配置git的用户信息
 echo "Configuring Git..."
