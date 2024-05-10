@@ -31,3 +31,8 @@ fi
 
 echo "Go installation completed successfully."
 
+echo "Go设置国内代理"
+go env -w GO111MODULE=on
+go env -w  GOPROXY=https://goproxy.cn,direct
+
+go env | grep GOPROXY
