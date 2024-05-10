@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # 检查是否已经安装了git，如果已经安装则退出脚本
-if command -v git &>/dev/null; then
-    echo "Git is already installed. Exiting."
-    exit 0
-fi
+# if command -v git &>/dev/null; then
+#     echo "Git is already installed. Exiting."
+#     exit 0
+# fi
 
 # 检查是否已经安装了wget，如果未安装则安装wget
 if ! command -v wget &>/dev/null; then
