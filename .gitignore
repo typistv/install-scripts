@@ -1,3 +1,12 @@
 .vscode
 
 eth_pos_scripts/ethereum
+
+## 忽悠压缩包
+*.tar*
+*.tgz
+*.zip
+*.7z
+
+### 忽略docker-compose-Linux-x86_64
+docker-compose-Linux-x86_64

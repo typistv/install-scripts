@@ -1,0 +1,17 @@
+#!/usr/bin/expect
+
+cd ~/tools/webase/webase-deploy/
+
+spawn python3 deploy.py installAll
+
+while {1} {
+    expect {
+        "*Do you want to re-download and overwrite it*" {
+            send "n\r"
+	    exp_continue
+        }
+        eof {
+            break
+        }
+    }
+}
